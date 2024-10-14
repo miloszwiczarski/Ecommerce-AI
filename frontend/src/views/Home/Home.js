@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { login } from "../../ServerRequest";
-import API from "../../axios/API"; // Zakładam, że tutaj będziesz miał funkcje do obsługi API
+import API from "../../axios/API";
 import Auth from "../../modules/Auth";
 import HomeBanner from "../../components/HomeBanner";
 import CategoryBanner from "../../components/CategoryBanner/CategoryBanner";
@@ -19,35 +19,49 @@ class Home extends Component {
       data: null,
       modalShow: false,
       login: true,
-      products: null,  // Zmienna do przechowywania produktów
+      products: null,  // Produkty
+      departments: null  // Departments
     };
     this.addToBag = this.addToBag.bind(this);
   }
 
-  // Dodajemy getAllProducts w componentDidMount
   componentDidMount() {
     if (!this.state.products) {
-      this.getAllProducts(); // Wywołujemy funkcję getAllProducts
+      this.getAllProducts();
+    }
+    if (!this.state.departments) {
+      this.getDepartments(); // Funkcja do pobrania departments
     }
   }
 
-  // Funkcja do pobierania produktów
-    // Funkcja do pobierania produktów
-    getAllProducts = () => {
-      API({
-        method: 'get',
-        url: '/products', // Endpoint do pobierania produktów
+  getAllProducts = () => {
+    API({
+      method: 'get',
+      url: '/products',
+    })
+      .then((response) => {
+        console.log("Odebrane produkty:", response.data);
+        this.setState({ products: response.data });
       })
-        .then((response) => {
-          console.log("Odebrane produkty:", response.data); // Dodaj log
-          this.setState({ products: response.data });
-        })
-        .catch((error) => {
-          console.error("Błąd podczas pobierania produktów", error);
-        });
-    };
-    
+      .catch((error) => {
+        console.error("Błąd podczas pobierania produktów", error);
+      });
+  };
 
+  // Funkcja do pobierania departments
+  getDepartments = () => {
+    API({
+      method: 'get',
+      url: '/departments',
+    })
+      .then((response) => {
+        console.log("Odebrane departments:", response.data);
+        this.setState({ departments: response.data });
+      })
+      .catch((error) => {
+        console.error("Błąd podczas pobierania departments", error);
+      });
+  };
 
   showHideModal = () => {
     this.setState({ modalShow: false });
@@ -62,11 +76,7 @@ class Home extends Component {
   };
 
   addToBag = (params) => {
-    if (
-      Auth.getUserDetails() !== undefined &&
-      Auth.getUserDetails() !== null &&
-      Auth.getToken() !== undefined
-    ) {
+    if (Auth.getUserDetails() && Auth.getToken()) {
       let cart = this.props.postCart(params);
       cart.then((res) => {
         console.log(res);
@@ -77,14 +87,13 @@ class Home extends Component {
   };
 
   render() {
-    const { products } = this.state;  // Pobieramy produkty z state
-    const { departments } = this.props;  // Pobieramy departments z props (jeśli są potrzebne)
+    const { products, departments } = this.state;
 
     return (
       <div>
         <HomeBanner />
         <CategoryBanner />
-        {products ? (
+        {products && departments ? (
           <NewArrivals
             products={products}
             departments={departments}
@@ -93,7 +102,7 @@ class Home extends Component {
         ) : null}
         <Benefit />
         <Advertisement />
-        {products ? (
+        {products && departments ? (
           <BestSeller
             products={products}
             departments={departments}

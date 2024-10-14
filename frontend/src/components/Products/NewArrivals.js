@@ -1,29 +1,27 @@
-
-
 import React, { Component } from "react";
 import SingleProduct from "./SingleProduct";
 import Heading from "../Heading";
 import PropTypes from "prop-types";
+
 class NewArrivals extends Component {
   constructor(props) {
     super(props);
     this.state = {
       products: this.props.products,
       productsBAK: this.props.products,
-      departments: this.props.departments
+      departments: this.props.departments || [],
+      selectedOption: "All" // Domyślnie pokazuje wszystkie produkty
     };
   }
 
   optionClicked(option) {
     let FilterList = this.state.productsBAK.filter(
-      item => item.department === option
+      (item) => option === "All" || item.department === option
     );
-    if (FilterList.length > 0) {
-      this.setState({ products: FilterList });
-    } else {
-      this.setState({ products: this.state.productsBAK });
-    }
-    this.setState({ selectedOption: option });
+    this.setState({ 
+      products: FilterList, 
+      selectedOption: option 
+    });
   }
 
   render() {
@@ -44,52 +42,44 @@ class NewArrivals extends Component {
                     className={`grid_sorting_button button d-flex flex-column justify-content-center align-items-center ${
                       this.state.selectedOption === "All"
                         ? "active is-checked"
-                        : null
+                        : ""
                     }`}
                   >
                     all
                   </li>
-                  <li
-                    className={`grid_sorting_button button d-flex flex-column justify-content-center align-items-center ${
-                      this.state.selectedOption === "Women"
-                        ? "active is-checked"
-                        : null
-                    }`}
-                    onClick={() => this.optionClicked("Women")}
-                  >
-                    women's
-                  </li>
 
-                  <li
-                    className={`grid_sorting_button button d-flex flex-column justify-content-center align-items-center ${
-                      this.state.selectedOption === "Men"
-                        ? "active is-checked"
-                        : null
-                    }`}
-                    onClick={() => this.optionClicked("Men")}
-                  >
-                    men's
-                  </li>
+                  {departments &&
+                    departments.map((dept, index) => (
+                      <li
+                        key={index}
+                        onClick={() => this.optionClicked(dept.departmentName)}
+                        className={`grid_sorting_button button d-flex flex-column justify-content-center align-items-center ${
+                          this.state.selectedOption === dept.departmentName
+                            ? "active is-checked"
+                            : ""
+                        }`}
+                      >
+                        {dept.departmentName.toLowerCase()}'s
+                      </li>
+                    ))}
                 </ul>
               </div>
             </div>
           </div>
           <div className="row">
             {products &&
-              products.slice(0, 8).map((item, index) => {
-                return (
-                  <div
-                    className="col-lg-3 col-sm-6"
-                    key={index}
-                    data-aos="zoom-in"
-                  >
-                    <SingleProduct
-                      productItem={item}
-                      addToBag={this.props.addToBag}
-                    />
-                  </div>
-                );
-              })}
+              products.slice(0, 8).map((item, index) => (
+                <div
+                  className="col-lg-3 col-sm-6"
+                  key={index}
+                  data-aos="zoom-in"
+                >
+                  <SingleProduct
+                    productItem={item}
+                    addToBag={this.props.addToBag}
+                  />
+                </div>
+              ))}
           </div>
         </div>
       </div>
@@ -98,7 +88,9 @@ class NewArrivals extends Component {
 }
 
 NewArrivals.propTypes = {
-  addToCart: PropTypes.func
+  addToCart: PropTypes.func,
+  products: PropTypes.array.isRequired,
+  departments: PropTypes.array.isRequired,
 };
 
 export default NewArrivals;

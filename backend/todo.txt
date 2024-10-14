@@ -1,0 +1,306 @@
+Chce rozdzielic tego maina na rozne pliki zgodnie z normami fastapi. Tak aby wszystko działało. Podaj strukture i dokladny kod kazdego z tych plikow.
+O to działający main:
+
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from typing import List
+from pydantic import BaseModel, EmailStr
+
+app = FastAPI()
+
+# Dodaj middleware CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Możesz również ograniczyć do określonych domen
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Model produktu
+class Product(BaseModel):
+    _id: int
+    imagePath: str
+    title: str
+    price: float
+    department: str  # Dodajemy pole department
+    category: str  # Dodajemy pole category
+
+# Model działu (departments)
+class Department(BaseModel):
+    id: int
+    departmentName: str
+    categories: str  # kategorie oddzielone przecinkami
+
+# Model użytkownika
+class User(BaseModel):
+    id: int
+    name: str
+    email: EmailStr
+    password: str
+
+class UserRegister(BaseModel):
+    name: str
+    email: EmailStr
+    password: str
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+
+# Symulowana baza danych produktów
+# Nowa lista produktów
+products = [
+    # Produkty dla mężczyzn
+    Product(
+        _id=1,
+        imagePath="https://media.6media.me/media/catalog/product/8/6/8683049501510-1.jpg",
+        title="Men's Stylish T-shirt",
+        price=49.99,
+        department="Men",
+        category="Shirts"
+    ),
+    Product(
+        _id=2,
+        imagePath="link_do_zdjęcia",
+        title="Men's Elegant Shirt",
+        price=69.99,
+        department="Men",
+        category="Shirts"
+    ),
+    Product(
+        _id=3,
+        imagePath="link_do_zdjęcia",
+        title="Men's Trendy Shoes",
+        price=89.99,
+        department="Men",
+        category="Shoes"
+    ),
+    Product(
+        _id=4,
+        imagePath="link_do_zdjęcia",
+        title="Men's Casual Jeans",
+        price=59.99,
+        department="Men",
+        category="Pants"
+    ),
+    Product(
+        _id=5,
+        imagePath="link_do_zdjęcia",
+        title="Men's Leather Jacket",
+        price=159.99,
+        department="Men",
+        category="Jackets"
+    ),
+    Product(
+        _id=6,
+        imagePath="link_do_zdjęcia",
+        title="Men's Sport Sneakers",
+        price=79.99,
+        department="Men",
+        category="Shoes"
+    ),
+    Product(
+        _id=7,
+        imagePath="link_do_zdjęcia",
+        title="Men's Casual Sweater",
+        price=49.99,
+        department="Men",
+        category="Sweaters"
+    ),
+    Product(
+        _id=8,
+        imagePath="link_do_zdjęcia",
+        title="Men's Classic Hat",
+        price=29.99,
+        department="Men",
+        category="Accessories"
+    ),
+
+    # Produkty dla kobiet
+    Product(
+        _id=9,
+        imagePath="link_do_zdjęcia",
+        title="Women's Stylish Dress",
+        price=89.99,
+        department="Women",
+        category="Dresses"
+    ),
+    Product(
+        _id=10,
+        imagePath="link_do_zdjęcia",
+        title="Women's Summer Top",
+        price=39.99,
+        department="Women",
+        category="Tops"
+    ),
+    Product(
+        _id=11,
+        imagePath="link_do_zdjęcia",
+        title="Women's High-Heel Shoes",
+        price=99.99,
+        department="Women",
+        category="Shoes"
+    ),
+    Product(
+        _id=12,
+        imagePath="link_do_zdjęcia",
+        title="Women's Casual Skirt",
+        price=59.99,
+        department="Women",
+        category="Skirts"
+    ),
+    Product(
+        _id=13,
+        imagePath="link_do_zdjęcia",
+        title="Women's Leather Jacket",
+        price=199.99,
+        department="Women",
+        category="Jackets"
+    ),
+    Product(
+        _id=14,
+        imagePath="link_do_zdjęcia",
+        title="Women's Sport Sneakers",
+        price=79.99,
+        department="Women",
+        category="Shoes"
+    ),
+    Product(
+        _id=15,
+        imagePath="link_do_zdjęcia",
+        title="Women's Handbag",
+        price=149.99,
+        department="Women",
+        category="Accessories"
+    ),
+    Product(
+        _id=16,
+        imagePath="link_do_zdjęcia",
+        title="Women's Sunglasses",
+        price=99.99,
+        department="Women",
+        category="Accessories"
+    ),
+
+    # Akcesoria
+    Product(
+        _id=17,
+        imagePath="link_do_zdjęcia",
+        title="Leather Wallet",
+        price=49.99,
+        department="Accessories",
+        category="Bags"
+    ),
+    Product(
+        _id=18,
+        imagePath="link_do_zdjęcia",
+        title="Classic Watch",
+        price=199.99,
+        department="Accessories",
+        category="Watches"
+    ),
+    Product(
+        _id=19,
+        imagePath="link_do_zdjęcia",
+        title="Gold Bracelet",
+        price=129.99,
+        department="Accessories",
+        category="Jewelry"
+    ),
+    Product(
+        _id=20,
+        imagePath="link_do_zdjęcia",
+        title="Sunglasses",
+        price=99.99,
+        department="Accessories",
+        category="Sunglasses"
+    ),
+    Product(
+        _id=21,
+        imagePath="link_do_zdjęcia",
+        title="Leather Belt",
+        price=39.99,
+        department="Accessories",
+        category="Bags"
+    ),
+    Product(
+        _id=22,
+        imagePath="link_do_zdjęcia",
+        title="Men's Cufflinks",
+        price=49.99,
+        department="Accessories",
+        category="Jewelry"
+    ),
+    Product(
+        _id=23,
+        imagePath="link_do_zdjęcia",
+        title="Travel Bag",
+        price=149.99,
+        department="Accessories",
+        category="Bags"
+    ),
+    Product(
+        _id=24,
+        imagePath="link_do_zdjęcia",
+        title="Silk Scarf",
+        price=69.99,
+        department="Accessories",
+        category="Scarves"
+    )
+]
+
+# Lista użytkowników (tymczasowa baza danych)
+users = [
+    User(id=1, name="Alice", email="alice@example.com", password="alice123"),
+    User(id=2, name="Bob", email="bob@example.com", password="bob123"),
+]
+
+next_user_id = 3  # Aby nadawać unikalne ID nowym użytkownikom
+
+# Przykładowa lista departamentów
+departments = [
+    Department(id=1, departmentName="Men", categories="Shirts,Shoes,Accessories"),
+    Department(id=2, departmentName="Women", categories="Dresses,Tops,Accessories"),
+    Department(id=3, departmentName="Accessories", categories="Bags,Watches,Hats")
+]
+
+# Endpoint do rejestracji
+@app.post("/register")
+def register(user: UserRegister):
+    global next_user_id
+
+    # Sprawdzamy, czy użytkownik o takim adresie e-mail już istnieje
+    for u in users:
+        if u.email == user.email:
+            raise HTTPException(status_code=400, detail="Email already registered")
+    
+    new_user = User(id=next_user_id, name=user.name, email=user.email, password=user.password)
+    users.append(new_user)
+    next_user_id += 1
+    return {"message": "User registered successfully", "user": new_user}
+
+# Endpoint do logowania
+@app.post("/login")
+def login(user: UserLogin):
+    for u in users:
+        if u.email == user.email and u.password == user.password:
+            return {"message": "Login successful", "user": u}
+    
+    raise HTTPException(status_code=400, detail="Invalid credentials")
+
+# Endpoint do pobrania listy użytkowników (do testowania)
+@app.get("/users", response_model=List[User])
+def get_users():
+    return users
+
+# Endpoint do produktów
+@app.get("/products", response_model=List[Product])
+def get_products():
+    return products
+
+# Endpoint do pobrania listy działów (departments)
+@app.get("/departments", response_model=List[Department])
+def get_departments():
+    return departments

@@ -1,5 +1,3 @@
-
-
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import HomeCartView from "../HomeCartView";
@@ -16,7 +14,12 @@ class NavBar extends Component {
     };
   }
 
+  // Dodaj componentDidMount, aby wywołać akcje Redux
   componentDidMount() {
+    // Wywołaj akcję pobierającą departamenty
+    this.props.getDepartments();  
+
+    // Pobierz koszyk użytkownika, jeśli nie został wcześniej załadowany
     if (Object.keys(this.props.cart).length < 1) {
       this.props.getCartByUserId();
     }
@@ -29,9 +32,9 @@ class NavBar extends Component {
   handleMenuClicked = () => {
     this.setState({ activeclass: !this.state.activeclass });
   };
+
   render() {
     const { departments, cart } = this.props;
-
     return (
       <div className="main_nav_container">
         <div className="container">

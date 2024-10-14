@@ -22,7 +22,7 @@ class PageNotFound extends Component {
             </p>
 
             <a
-              href="/smart-shop"
+              href="/"
               className="home-page-button button-dark-blue iq-mt-15 text-center"
             >
               GOTO HOME PAGE
